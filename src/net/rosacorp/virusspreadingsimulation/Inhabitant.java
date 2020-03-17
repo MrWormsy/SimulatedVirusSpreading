@@ -56,7 +56,9 @@ public class Inhabitant {
         this.isInfected = true;
 
         // Add him to the list of infected persons
-        VirusSpreadingSimulation.theWorld.getInfected().add(this.id);
+
+        // TODO NOT THIS ONE BECAUSE WE CAN GET A CONCURENT EXCEPTION...
+        // VirusSpreadingSimulation.theWorld.getInfected().add(this.id);
         VirusSpreadingSimulation.theWorld.getLastInfected().add(this.id);
     }
 

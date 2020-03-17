@@ -100,28 +100,42 @@ public class World {
             // Each day each person can contaminate up to 3 other individuals, (even if they are already infected it is count as a person)
             Inhabitant currentHolder = this.getInhabitants().get(holderID);
 
+            Integer friendID;
+
             // Thus we take 3 random id out of the friend list (or less if the guy do not have 3 friends) TODO FOR OPTIMIZATION MAYBE WE CAN COUNT THE NUMBER OF INFECTED FRIEND NOT TO LOOP FOR NOTHING
             ArrayList<Integer> randomFriends = new ArrayList<>();
             for (int index = 0; index < Math.min(3, currentHolder.getNeighbors().size()); index++) {
                 // We loop until we get 3 or less different persons (even if they are already infected, doesn't matter)
 
+                do {
+                    friendID = currentHolder.getNeighbors().get(new Random(System.currentTimeMillis() + new Random().nextInt()).nextInt(Math.min(3, currentHolder.getNeighbors().size())));
+                } while (randomFriends.contains(friendID));
 
+                randomFriends.add(friendID);
             }
-
             // Now we loop all their relations and spread the virus
-            for (Integer friendID: this.getInhabitants().get(holderID).getNeighbors()) {
+            for(Integer friendID2: randomFriends) {
 
                 // We first check that this person is not already infected (for optimization). And if not we contaminate him
-                if (!this.getInfected().contains(friendID)) {
+                if (!(this.getInfected().contains(friendID2) || this.getLastInfected().contains(friendID2))) {
 
                     // We can infect the person
-                    this.getInhabitants().get(friendID).setInfected();
+                    this.getInhabitants().get(friendID2).setInfected();
                 }
             }
         }
 
-        // If we are at day 14 we can begin to know if people are dying or not from the virus
+        // We add all the infected of the day into the infected list
+        this.infected.addAll(this.getLastInfected());
 
+        // If we are at day 15 we can begin to know if people are dying or not from the virus (because of the incubation time of the virus)
+        if (this.day > 14) {
+
+            // We loop through all the infected to know if they recover or die
+            for (Integer infectedID : this.getInfected()) {
+
+            }
+        }
 
         // Give some stats
         System.out.println("Day " + this.day + ": " + this.infected.size() + " infected persons and " + this.lastInfected.size() + " today");
