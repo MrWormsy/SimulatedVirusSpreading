@@ -5,13 +5,13 @@ import java.util.Map;
 public class VirusSpreadingSimulation {
 
     // N
-    public static int worldSize = 10000;
+    public static int worldSize = 100000;
 
     // Number of people on the map
     public static int numberOfInhabitants = 10000;
 
     // M
-    public static int radius = 50;
+    public static int radius = 10;
 
     // F
     public static int maxNumberOfFriends = 25;
@@ -29,8 +29,11 @@ public class VirusSpreadingSimulation {
         // Use threads ? (not for now)
         theWorld.findRelations();
 
-        // Loop until all the persons are infected
-        for (int i = 0; i < 50; i++) {
+        // Day 0 : patient 0 has been implemented
+        System.out.println("Day 0: patient 0 has been implemented");
+
+        // While there are infected persons
+        while (theWorld.getInfected().size() != 0) {
             theWorld.addOneDay();
         }
 
