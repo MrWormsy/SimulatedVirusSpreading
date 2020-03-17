@@ -15,7 +15,11 @@ public class World {
 
     // We put the dead persons here
     private ArrayList<Integer> deads;
+    private ArrayList<Integer> lastDeads;
 
+    // The people cured
+    private ArrayList<Integer> cured;
+    private ArrayList<Integer> lastCured;
 
     private int day;
 
@@ -23,7 +27,10 @@ public class World {
         this.inhabitants = new HashMap<>();
         this.infected = new ArrayList<>();
         this.lastInfected = new ArrayList<>();
+        this.cured = new ArrayList<>();
+        this.lastCured = new ArrayList<>();
         this.deads = new ArrayList<>();
+        this.lastDeads = new ArrayList<>();
         this.day = 0;
     }
 
@@ -93,6 +100,8 @@ public class World {
 
         // We reset the last infected arraylist (for the next day)
         this.lastInfected = new ArrayList<>();
+        this.lastCured = new ArrayList<>();
+        this.lastDeads = new ArrayList<>();
 
         // We loop through all the last infected persons (not the real infected arraylist because they have already infected everybody)
         for(Integer holderID : this.infected) {
@@ -113,6 +122,7 @@ public class World {
 
                 randomFriends.add(friendID);
             }
+
             // Now we loop all their relations and spread the virus
             for(Integer friendID2: randomFriends) {
 
@@ -125,20 +135,26 @@ public class World {
             }
         }
 
-        // We add all the infected of the day into the infected list
-        this.infected.addAll(this.getLastInfected());
-
         // If we are at day 15 we can begin to know if people are dying or not from the virus (because of the incubation time of the virus)
         if (this.day > 14) {
 
             // We loop through all the infected to know if they recover or die
             for (Integer infectedID : this.getInfected()) {
-
+                this.getInhabitants().get(infectedID).makeHimRecover();
             }
+
+            // Remove all the deads and the cured ones from the infected list
+            this.infected.removeAll(this.lastCured);
+            this.infected.removeAll(this.lastDeads);
         }
 
+        // We add all the infected of the day into the infected list
+        this.infected.addAll(this.getLastInfected());
+        this.cured.addAll(this.lastCured);
+        this.deads.addAll(this.lastDeads);
+
         // Give some stats
-        System.out.println("Day " + this.day + ": " + this.infected.size() + " infected persons and " + this.lastInfected.size() + " today");
+        System.out.println("Day " + this.day + ": " + this.infected.size() + " infected persons, " + this.cured.size() + " are cured, " + this.deads.size() + " are dead and " + this.lastInfected.size() + " today");
     }
 
     public HashMap<Integer, Inhabitant> getInhabitants() {
@@ -155,6 +171,10 @@ public class World {
 
     public void setInfected(ArrayList<Integer> infected) {
         this.infected = infected;
+    }
+
+    public void removeFromInfected(Integer infectedID) {
+        this.infected.remove(infectedID);
     }
 
     public ArrayList<Integer> getDeads() {
@@ -179,6 +199,30 @@ public class World {
 
     public void setLastInfected(ArrayList<Integer> lastInfected) {
         this.lastInfected = lastInfected;
+    }
+
+    public ArrayList<Integer> getCured() {
+        return cured;
+    }
+
+    public void setCured(ArrayList<Integer> cured) {
+        this.cured = cured;
+    }
+
+    public ArrayList<Integer> getLastDeads() {
+        return lastDeads;
+    }
+
+    public void setLastDeads(ArrayList<Integer> lastDeads) {
+        this.lastDeads = lastDeads;
+    }
+
+    public ArrayList<Integer> getLastCured() {
+        return lastCured;
+    }
+
+    public void setLastCured(ArrayList<Integer> lastCured) {
+        this.lastCured = lastCured;
     }
 
 }

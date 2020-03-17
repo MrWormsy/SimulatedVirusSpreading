@@ -1,8 +1,5 @@
 package net.rosacorp.virusspreadingsimulation;
 
-import jdk.nashorn.internal.ir.debug.ObjectSizeCalculator;
-
-import java.lang.instrument.Instrumentation;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -12,7 +9,9 @@ public class Inhabitant {
     private boolean isInfected;
     private float posX;
     private float posY;
-    private boolean alive;
+    private boolean isCured;
+    private boolean isAlive;
+    private int dayInfected;
 
     private ArrayList<Integer> neighbors;
 
@@ -25,7 +24,8 @@ public class Inhabitant {
         this.isInfected = false;
 
         // And alive
-        this.alive = true;
+        this.isCured = false;
+        this.isAlive = true;
 
         // The first inhabitant will be the one infected (patient 0)
         if (id == 0) {
@@ -53,13 +53,35 @@ public class Inhabitant {
 
     // Mark this person as infected
     public void setInfected() {
-        this.isInfected = true;
+        if (!(this.isCured || !this.isAlive)) {
 
-        // Add him to the list of infected persons
+            this.isInfected = true;
+            this.dayInfected = VirusSpreadingSimulation.theWorld.getDay();
 
-        // TODO NOT THIS ONE BECAUSE WE CAN GET A CONCURENT EXCEPTION...
-        // VirusSpreadingSimulation.theWorld.getInfected().add(this.id);
-        VirusSpreadingSimulation.theWorld.getLastInfected().add(this.id);
+            // Add him to the list of infected persons
+
+            // TODO NOT THIS ONE BECAUSE WE CAN GET A CONCURENT EXCEPTION...
+            // VirusSpreadingSimulation.theWorld.getInfected().add(this.id);
+
+            VirusSpreadingSimulation.theWorld.getLastInfected().add(this.id);
+        }
+    }
+
+    // If this guy has been infected 14 days ago and this method is called he can either recovers and becomes immune to the virus (with a probability of 0.97), or dies
+    public void makeHimRecover() {
+        if ((VirusSpreadingSimulation.theWorld.getDay() - this.dayInfected < 14) || (this.isCured || !this.isAlive))
+            return;
+
+        // This person recovers with a probability of 97%
+        if (new Random(System.currentTimeMillis() + new Random().nextInt()).nextFloat() <= 0.97f) {
+            // And set him to the cured ones
+            VirusSpreadingSimulation.theWorld.getLastCured().add(this.id);
+            this.isCured = true;
+        } else {
+            // Or the dead ones...
+            VirusSpreadingSimulation.theWorld.getLastDeads().add(this.id);
+            this.isAlive = false;
+        }
     }
 
     @Override
@@ -107,12 +129,27 @@ public class Inhabitant {
         this.neighbors = neighbors;
     }
 
+    public boolean isCured() {
+        return isCured;
+    }
+
+    public void setCured(boolean cured) {
+        this.isCured = cured;
+    }
+
     public boolean isAlive() {
-        return alive;
+        return isAlive;
     }
 
     public void setAlive(boolean alive) {
-        this.alive = alive;
+        isAlive = alive;
     }
 
+    public int getDayInfected() {
+        return dayInfected;
+    }
+
+    public void setDayInfected(int dayInfected) {
+        this.dayInfected = dayInfected;
+    }
 }

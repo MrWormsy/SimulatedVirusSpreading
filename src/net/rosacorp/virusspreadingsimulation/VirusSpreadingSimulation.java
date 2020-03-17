@@ -5,7 +5,7 @@ import java.util.Map;
 public class VirusSpreadingSimulation {
 
     // N
-    public static int worldSize = 10000;
+    public static int worldSize = 1000;
 
     // Number of people on the map
     public static int numberOfInhabitants = 10000;
@@ -14,7 +14,7 @@ public class VirusSpreadingSimulation {
     public static int radius = 100;
 
     // F
-    public static int maxNumberOfFriends = 25;
+    public static int maxNumberOfFriends = 50;
 
     public static World theWorld;
 
