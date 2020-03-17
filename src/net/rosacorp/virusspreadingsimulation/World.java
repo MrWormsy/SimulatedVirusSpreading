@@ -103,25 +103,55 @@ public class World {
         this.lastCured = new ArrayList<>();
         this.lastDeads = new ArrayList<>();
 
+        // System.out.println(getInhabitants().get(1).getNeighbors());
+        // this.getInhabitants().get(1).getNeighbors().removeAll(this.getInfected());
+        // System.out.println(getInhabitants().get(1).getNeighbors());
+
         // We loop through all the last infected persons (not the real infected arraylist because they have already infected everybody)
         for(Integer holderID : this.infected) {
 
-            // Each day each person can contaminate up to 3 other individuals, (even if they are already infected it is count as a person)
+            // Each day each person can contaminate up to 3 other individuals
             Inhabitant currentHolder = this.getInhabitants().get(holderID);
 
             Integer friendID;
 
+            ArrayList<Integer> randomFriends = new ArrayList<>();
+
+            // If the guy has 3 or less friends we take those friends to be the next victims
+            if (currentHolder.getNeighbors().size() <= 3) {
+                randomFriends = (ArrayList<Integer>) currentHolder.getNeighbors().clone();
+            }
+
+            //Otherwise we take 3 random dudes from the friend list
+            else {
+
+                for (int index = 0; index < 3; index++) {
+                    // We loop until we get 3 or less different persons (and not already infected)
+                    do {
+                        friendID = currentHolder.getNeighbors().get(new Random(System.currentTimeMillis() + new Random().nextInt()).nextInt(currentHolder.getNeighbors().size()));
+                    } while (randomFriends.contains(friendID));
+
+                    randomFriends.add(friendID);
+                }
+            }
+
+            /*
+
             // Thus we take 3 random id out of the friend list (or less if the guy do not have 3 friends) TODO FOR OPTIMIZATION MAYBE WE CAN COUNT THE NUMBER OF INFECTED FRIEND NOT TO LOOP FOR NOTHING
             ArrayList<Integer> randomFriends = new ArrayList<>();
             for (int index = 0; index < Math.min(3, currentHolder.getNeighbors().size()); index++) {
-                // We loop until we get 3 or less different persons (even if they are already infected, doesn't matter)
+                // We loop until we get 3 or less different persons (and not already infected infected)
 
                 do {
                     friendID = currentHolder.getNeighbors().get(new Random(System.currentTimeMillis() + new Random().nextInt()).nextInt(Math.min(3, currentHolder.getNeighbors().size())));
                 } while (randomFriends.contains(friendID));
 
+                // TODO HERE WE CAN BE STUCKED WITH THE LOOP I NEED TO FIND AN OTHER SOLUTION
+
                 randomFriends.add(friendID);
             }
+
+             */
 
             // Now we loop all their relations and spread the virus
             for(Integer friendID2: randomFriends) {
@@ -152,6 +182,13 @@ public class World {
         this.infected.addAll(this.getLastInfected());
         this.cured.addAll(this.lastCured);
         this.deads.addAll(this.lastDeads);
+
+        /*
+        // Now we can remove all the infected ones from the persons' friendlist
+        for(Map.Entry<Integer, Inhabitant> entry : this.inhabitants.entrySet()) {
+            entry.getValue().getNeighbors().removeAll(this.getLastInfected());
+        }
+        */
 
         // Give some stats
         System.out.println("Day " + this.day + ": " + this.infected.size() + " infected persons, " + this.cured.size() + " are cured, " + this.deads.size() + " are dead and " + this.lastInfected.size() + " today");
