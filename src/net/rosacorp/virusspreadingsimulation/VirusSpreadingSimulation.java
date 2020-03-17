@@ -11,7 +11,7 @@ public class VirusSpreadingSimulation {
     public static int numberOfInhabitants = 10000;
 
     // M
-    public static int radius = 50;
+    public static int radius = 100;
 
     // F
     public static int maxNumberOfFriends = 25;

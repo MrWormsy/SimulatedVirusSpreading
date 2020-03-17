@@ -91,14 +91,22 @@ public class World {
     public void addOneDay() {
         this.day++;
 
-        // Do we say that somebody infected today can also infect others the same day ? Not for now
-        ArrayList<Integer> tempLastInfected = (ArrayList<Integer>) lastInfected.clone();
-
         // We reset the last infected arraylist (for the next day)
         this.lastInfected = new ArrayList<>();
 
         // We loop through all the last infected persons (not the real infected arraylist because they have already infected everybody)
-        for(Integer holderID : tempLastInfected) {
+        for(Integer holderID : this.infected) {
+
+            // Each day each person can contaminate up to 3 other individuals, (even if they are already infected it is count as a person)
+            Inhabitant currentHolder = this.getInhabitants().get(holderID);
+
+            // Thus we take 3 random id out of the friend list (or less if the guy do not have 3 friends) TODO FOR OPTIMIZATION MAYBE WE CAN COUNT THE NUMBER OF INFECTED FRIEND NOT TO LOOP FOR NOTHING
+            ArrayList<Integer> randomFriends = new ArrayList<>();
+            for (int index = 0; index < Math.min(3, currentHolder.getNeighbors().size()); index++) {
+                // We loop until we get 3 or less different persons (even if they are already infected, doesn't matter)
+
+
+            }
 
             // Now we loop all their relations and spread the virus
             for (Integer friendID: this.getInhabitants().get(holderID).getNeighbors()) {
