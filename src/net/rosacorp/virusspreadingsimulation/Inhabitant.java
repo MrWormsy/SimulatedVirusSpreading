@@ -84,6 +84,12 @@ public class Inhabitant {
         }
     }
 
+    // When a vaccine is found, we give it to this person to make him recover
+    public void giveVaccine() {
+        VirusSpreadingSimulation.theWorld.getLastCured().add(this.id);
+        this.isCured = true;
+    }
+
     @Override
     public String toString() {
         return "Inhabitant n." + id + " isInfected:" + isInfected + " at (posX=" + posX + ", posY=" + posY + ") with " + neighbors.size() + " neighbors";

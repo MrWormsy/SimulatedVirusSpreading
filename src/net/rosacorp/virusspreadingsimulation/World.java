@@ -165,7 +165,42 @@ public class World {
             }
         }
 
-        // If we are at day 15 we can begin to know if people are dying or not from the virus (because of the incubation time of the virus)
+        // Here we want to find after a period T, V random persons to be cured by the vaccine
+        if (this.day > VirusSpreadingSimulation.numberOfDayToFindAVaccine) {
+
+            ArrayList<Integer> randomIDToCure = new ArrayList<>();
+            Integer luckyPersonID;
+
+
+            // We find V or less persons to take the vaccine if they are infected
+
+            // If the number of infected persons is less than V we take the whole ArrayList
+            if (this.getInfected().size() <= VirusSpreadingSimulation.numberOfVaccineEachDay) {
+                randomIDToCure.addAll(this.infected);
+            }
+
+            // Else we find V random persons
+            else {
+                for (int index = 0; index < VirusSpreadingSimulation.numberOfVaccineEachDay; index++) {
+                    // We loop until we get 3 or less different persons (and not already infected)
+                    do {
+                        luckyPersonID = this.getInfected().get(new Random(System.currentTimeMillis() + new Random().nextInt()).nextInt(this.getInfected().size()));
+                    } while (randomIDToCure.contains(luckyPersonID));
+
+                    randomIDToCure.add(luckyPersonID);
+                }
+            }
+
+            // Now we only have to cure them
+            for (Integer id : randomIDToCure) {
+                this.getInhabitants().get(id).giveVaccine();
+            }
+
+            // Remove the curred persons from the infected ArrayList
+            this.infected.removeAll(this.lastCured);
+        }
+
+        // If we are at day 15 we can begin to know if people are dying or not from the virus (because of the incubation time of the virus and to optimize)
         if (this.day > 14) {
 
             // We loop through all the infected to know if they recover or die
