@@ -1,5 +1,5 @@
 # VirusSpreadingSimulation
-We want to simulate the way a virus spread in a 2D world where some people know each other.
+We want to simulate the way a virus spreads in a 2D world where some people know each other.
 
 ## If you want to run it without args it will run an exemple where N=5000, M=25, F=10, T=10 & V=25
 And it will display a run with this configuration
